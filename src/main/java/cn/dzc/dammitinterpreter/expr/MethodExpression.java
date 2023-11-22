@@ -36,9 +36,12 @@ public class MethodExpression implements Expression {
     public Value eval() {
         if (methodName.equals("sum")) {
             BigDecimal sum = new BigDecimal(0);
-            List<Value> values = evalAndCheckAllParam(ValueType.DIGIT);
-            for (Value value : values) {
-                sum = sum.add(value.getNum());
+            for (Expression expression : expressions) {
+                Value value = expression.eval();
+                if (!value.isDigit()) {
+                    throw new IllegalArgumentException("unsupported method param type");
+                }
+                sum = sum.add(value.getRefDigit());
             }
             return new Value(sum, context);
         } else if (methodName.equals("subString")) {

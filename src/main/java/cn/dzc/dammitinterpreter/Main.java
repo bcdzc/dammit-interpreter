@@ -24,17 +24,18 @@ public class Main {
         //        + "b=a + \"defg\";\n"
         //        + "c=subString(b, 1,5);";
 
-        String script = "{\n"
-                + "\tsum = 1;\n"
-                + "\tfor (i  =0; i < 10; i = i + 1) {\n"
-                + "\t\tsum = 5 * (sum(sum, 2) + 1);\n"
-                + "\t}\n"
-                + "\tif (sum > 100) {\n"
-                + "\t\t\"pass\";\n"
-                + "\t} else {\n"
-                + "\t\t\"fail\";\n"
-                + "\t}\n"
-                + "}";
+        String script =
+                "{\n" +
+                "    sum = 1;\n" +
+                "    for (i = 0; i < 2; i = i + 1) {\n" +
+                "        sum = 5 * (sum(sum, 2) + 1);\n" +
+                "    }\n" +
+                "    if (sum == 115) {\n" +
+                "        \"pass\";\n" +
+                "    } else {\n" +
+                "        \"fail\";\n" +
+                "    }\n" +
+                "}";
 
         Map<String, Value> dataMap = new HashMap<>();
         dataMap.put("a.b.c", new Value(new BigDecimal(123), dataMap));

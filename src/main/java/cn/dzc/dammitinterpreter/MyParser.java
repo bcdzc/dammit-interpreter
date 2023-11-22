@@ -116,6 +116,29 @@ public class MyParser {
         }
     }
 
+    public Expression method() {
+        Expression left = new UnaryExpression(((VarToken) head).getText(), ValueType.VARIABLE, context);
+        next();
+        if (!expect(L_PAREN)) {
+            throw new IllegalArgumentException("expect method start (");
+        }
+        next();
+        List<Expression> paramList = new ArrayList<>();
+
+        if (!expect(R_PAREN)) {
+            paramList.add(expr());
+            while (expect(COMMA)) {
+                next();
+                paramList.add(expr());
+            }
+        }
+        if (!expect(R_PAREN)) {
+            throw new IllegalArgumentException("expect method end )");
+        }
+        next();
+        return new MethodExpression(left.eval(), paramList, context);
+    }
+
     public Expression _if() {
         if (!expect(L_PAREN)) {
             throw new IllegalArgumentException("expect (");
@@ -203,11 +226,6 @@ public class MyParser {
         return left;
     }
 
-    /**
-     * <expression> ::= <relational-term> | <expression> <logical-operator> <relational-term>
-     *
-     * @return
-     */
     public Expression expr() {
         Expression left = cmp();
         if (expect(AND) || expect(OR)) {
@@ -219,11 +237,6 @@ public class MyParser {
         return left;
     }
 
-    /**
-     * <relational-term> ::= <arithmetic-term> | <relational-term> <comparison-operator> <arithmetic-term>
-     *
-     * @return
-     */
     public Expression cmp() {
         Expression left = addOrMinus();
         if (expect(GREATER) || expect(GREATER_OR_EQUAL) || expect(SMALLER) || expect(SMALLER_OR_EQUAL) || expect(EQUAL)) {
@@ -291,25 +304,6 @@ public class MyParser {
         }
     }
 
-
-    public Expression method() {
-        Expression left = expr();
-        if (expect(L_PAREN)) {
-            next();
-            List<Expression> paramList = new ArrayList<>();
-            paramList.add(method());
-            while (expect(COMMA)) {
-                next();
-                paramList.add(method());
-            }
-            if (!expect(R_PAREN)) {
-                throw new IllegalArgumentException("expect method end )");
-            }
-            next();
-            return new MethodExpression(left.eval(), paramList, context);
-        }
-        return left;
-    }
 
 
 }
