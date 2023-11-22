@@ -26,11 +26,11 @@ public class Main {
 
         String script =
                 "{\n" +
-                "    sum = 1;\n" +
+                "    num = 1;\n" +
                 "    for (i = 0; i < 2; i = i + 1) {\n" +
-                "        sum = 5 * (sum(sum, 2) + 1);\n" +
+                "        num = 5 * (sum(num, 2) + 1);\n" +
                 "    }\n" +
-                "    if (sum == 115) {\n" +
+                "    if (num == 115) {\n" +
                 "        \"pass\";\n" +
                 "    } else {\n" +
                 "        \"fail\";\n" +
