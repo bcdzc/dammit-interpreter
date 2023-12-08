@@ -57,6 +57,10 @@ public enum TokenType {
     IF,
     // else
     ELSE,
+    // [
+    L_ARRAY,
+    // ]
+    R_ARRAY,
     // over
     NONE
 }

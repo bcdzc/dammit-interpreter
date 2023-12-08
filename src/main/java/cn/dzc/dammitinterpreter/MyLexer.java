@@ -106,13 +106,12 @@ public class MyLexer {
             return new SymbolToken(TokenType.LINE_BREAK);
         }
         if (c == '"') {
-            iterator.next();
-            Token nextToken = next();
-            if (iterator.current() != '"') {
-                throw new IllegalArgumentException("expect string end \"");
+            StringBuilder buf = new StringBuilder();
+            while ('"' != (c = iterator.next())) {
+                buf.append(c);
             }
             iterator.next();
-            return new StringToken(((VarToken) nextToken).getText());
+            return new StringToken(buf.toString());
         }
         if (c == '{') {
             iterator.next();
@@ -121,6 +120,14 @@ public class MyLexer {
         if (c == '}') {
             iterator.next();
             return new SymbolToken(TokenType.R_CODE_BLOCK);
+        }
+        if (c == '[') {
+            iterator.next();
+            return new SymbolToken(TokenType.L_ARRAY);
+        }
+        if (c == ']') {
+            iterator.next();
+            return new SymbolToken(TokenType.R_ARRAY);
         }
         if (Character.isDigit(c)) {
             sb.append(c);
@@ -134,6 +141,7 @@ public class MyLexer {
                     break;
                 }
             }
+
             return new DigitToken(new BigDecimal(Integer.parseInt(sb.toString())));
         } else if (Character.isLetter(c) || c == '.') {
             sb.append(c);

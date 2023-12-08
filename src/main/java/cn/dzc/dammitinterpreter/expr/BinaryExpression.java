@@ -39,6 +39,10 @@ public class BinaryExpression implements Expression {
                 return new Value(lValue.getRefValue() + rValue.getRefValue(), ValueType.STRING, context);
             } else if (lValue.isDigit() && rValue.isDigit()) {
                 return digit((n1, n2) -> n1.add(n2));
+            } else if (lValue.isString() && rValue.isDigit()) {
+                return new Value(lValue.getRefValue() + rValue.getRefDigit(), ValueType.STRING, context);
+            } else {
+                throw new IllegalArgumentException("invalid plus");
             }
         } else if (tokenType == TokenType.MINUS) {
             return digit((n1, n2) -> n1.subtract(n2));
@@ -85,8 +89,8 @@ public class BinaryExpression implements Expression {
             Value l = left.eval();
             Value r = right.eval();
             checkParam(l, ValueType.VARIABLE);
-            this.context.put(l.getText(), right.eval());
-            return r;
+            l.setElem(r);
+            return l;
         }
         throw new IllegalArgumentException("unknown binary type");
     }

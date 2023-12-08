@@ -90,7 +90,6 @@ public class MyParser {
     }
 
     public Expression statement() {
-        Expression ret;
         if (expect(FOR_LOOP)) {
             next();
             // for code block finish
@@ -99,17 +98,9 @@ public class MyParser {
             next();
             return _if();
         } else {
-            mark();
-            next();
-            if (expect(ASSIGN)) {
-                recover();
-                ret = assign();
-            } else {
-                recover();
-                ret = expr();
-            }
+            Expression ret = assign();
             if (!expect(LINE_BREAK)) {
-                throw new IllegalArgumentException("expect LINE_BREAK");
+                throw new IllegalArgumentException("expect ;");
             }
             next();
             return ret;
@@ -250,22 +241,22 @@ public class MyParser {
 
     public Expression addOrMinus() {
         Expression left = mulOrDivide();
-        if (expect(PLUS) || expect(MINUS)) {
+        while (expect(PLUS) || expect(MINUS)) {
             TokenType op = head.getTokenType();
             next();
             Expression right = addOrMinus();
-            return new BinaryExpression(left, right, op, this.context);
+            left = new BinaryExpression(left, right, op, this.context);
         }
         return left;
     }
 
     public Expression mulOrDivide() {
         Expression left = factor();
-        if (expect(MUL) || expect(DIV)) {
+        while (expect(MUL) || expect(DIV)) {
             TokenType op = head.getTokenType();
             next();
             Expression right = mulOrDivide();
-            return new BinaryExpression(left, right, op, this.context);
+            left = new BinaryExpression(left, right, op, this.context);
         }
         return left;
     }
@@ -296,6 +287,22 @@ public class MyParser {
                 } else if (cur instanceof StringToken) {
                     return new UnaryExpression(((VarToken) cur).getText(), ValueType.STRING, context);
                 } else if (cur instanceof VarToken) {
+                    // array
+                    if (expect(L_ARRAY)) {
+                        next();
+                        Expression arrIdx = expr();
+                        if (!expect(R_ARRAY)) {
+                            throw new IllegalArgumentException("expect ]");
+                        }
+                        next();
+                        Value idxValue = arrIdx.eval();
+                        if (!idxValue.isDigit()) {
+                            throw new IllegalArgumentException("array index must be Integer");
+                        }
+                        String arrName = ((VarToken) cur).getText();
+                        Value value = new Value(arrName, idxValue.getRefDigit().intValue(), context);
+                        return new UnaryExpression(value);
+                    }
                     return new UnaryExpression(((VarToken) cur).getText(), ValueType.VARIABLE, context);
                 } else {
                     throw new IllegalArgumentException("not support factor");
