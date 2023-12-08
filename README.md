@@ -1,5 +1,5 @@
 # dammit-interpreter
-简易的解释器，支持for循环、if语句、变量赋值。运行case参照Main.java
+简易的解释器，支持for循环、if语句、变量赋值、一维数组。运行case参照Main.java
 
 ```
 {
